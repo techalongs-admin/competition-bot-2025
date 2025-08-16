@@ -2,22 +2,13 @@ package org.firstinspires.ftc.teamcode;
 
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.IMU;
-
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.Quaternion;
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 public class Robot {
     private final MecanumDrive drivetrain;
+    private final NewIMU imu;
 
     public enum DriveState {
         ROBOT_CENTRIC,
@@ -46,10 +37,13 @@ public class Robot {
         backRight.stopAndResetEncoder();
 
         drivetrain = new MecanumDrive(false, frontLeft, frontRight, backLeft, backRight);
+        imu = new NewIMU(hardwareMap, "imu"); // TODO - Verify String id
     }
 
     public void drive(DriveState state, GamepadEx gamepad, double limiter) {
         if (state == DriveState.ROBOT_CENTRIC) driveRobotCentric(gamepad, limiter);
+        else if (state == DriveState.FIELD_CENTRIC) driveFieldCentric(gamepad, limiter);
+        else throw new IllegalArgumentException("Not a valid Drive State");
     }
 
     private void driveRobotCentric(GamepadEx gamepad, double limiter) {
@@ -57,6 +51,14 @@ public class Robot {
         double forwardSpeed = gamepad.getLeftY() * limiter;
         double turnSpeed = gamepad.getRightX() * limiter;
 
-        drivetrain.driveRobotCentric(strafeSpeed, forwardSpeed, turnSpeed);
+        drivetrain.driveRobotCentric(strafeSpeed, forwardSpeed, turnSpeed, false); // TODO - Try square inputs??
+    }
+
+    private void driveFieldCentric(GamepadEx gamepad, double limiter) {
+        double strafeSpeed = gamepad.getLeftX() * limiter;
+        double forwardSpeed = gamepad.getLeftY() * limiter;
+        double turnSpeed = gamepad.getRightX() * limiter;
+
+        drivetrain.driveFieldCentric(strafeSpeed, forwardSpeed, turnSpeed, imu.getRotation2d().getDegrees(), false);
     }
 }
