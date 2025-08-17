@@ -1,14 +1,18 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.robocol.Command;
 
 public class Robot {
     private final MecanumDrive drivetrain;
     private final NewIMU imu;
+    private final Claw claw;
 
     public enum DriveState {
         ROBOT_CENTRIC,
@@ -36,8 +40,15 @@ public class Robot {
         backLeft.stopAndResetEncoder();
         backRight.stopAndResetEncoder();
 
+        frontLeft.setRunMode(Motor.RunMode.VelocityControl);
+        frontRight.setRunMode(Motor.RunMode.VelocityControl);
+        backLeft.setRunMode(Motor.RunMode.VelocityControl);
+        backRight.setRunMode(Motor.RunMode.VelocityControl);
+
         drivetrain = new MecanumDrive(false, frontLeft, frontRight, backLeft, backRight);
         imu = new NewIMU(hardwareMap, "imu"); // TODO - Verify String id
+
+        claw = new Claw(hardwareMap, "claw");
     }
 
     public void drive(DriveState state, GamepadEx gamepad, double limiter) {
@@ -60,5 +71,13 @@ public class Robot {
         double turnSpeed = gamepad.getRightX() * limiter;
 
         drivetrain.driveFieldCentric(strafeSpeed, forwardSpeed, turnSpeed, imu.getRotation2d().getDegrees(), false);
+    }
+
+    public InstantCommand openClaw() {
+        return new InstantCommand(claw::open, claw);
+    }
+
+    public InstantCommand closeClaw(){
+        return new InstantCommand(claw::close, claw);
     }
 }
