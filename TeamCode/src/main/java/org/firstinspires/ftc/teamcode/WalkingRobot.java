@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
@@ -14,6 +15,7 @@ public class WalkingRobot extends LinearOpMode {
     private DcMotor frontRight;
     private DcMotor backLeft;
     private DcMotor backRight;
+    private ColorSensor sensor;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -21,6 +23,7 @@ public class WalkingRobot extends LinearOpMode {
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
+        sensor = hardwareMap.get(ColorSensor.class, "sensor");
 
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -54,5 +57,17 @@ public class WalkingRobot extends LinearOpMode {
             backLeft.setPower(BLPower * limiter);
             backRight.setPower(BRPower * limiter);
         }
+    }
+
+    private void updateTelemetry() {
+        telemetry.addData("Front Right", frontRight.getPower());
+        telemetry.addData("Front Left", frontLeft.getPower());
+        telemetry.addData("Back Right", backRight.getPower());
+        telemetry.addData("Back Left", backLeft.getPower());
+        telemetry.addData("Red", sensor.red());
+        telemetry.addData("Green", sensor.green());
+        telemetry.addData("Blue", sensor.blue());
+        telemetry.addData("Alpha", sensor.alpha());
+        telemetry.update();
     }
 }
