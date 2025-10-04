@@ -26,8 +26,8 @@ public class NewIMU extends GyroEx {
     public void init() {
         IMU.Parameters parameters = new IMU.Parameters(
                 new RevHubOrientationOnRobot(
-                        RevHubOrientationOnRobot.LogoFacingDirection.UP, // TODO - align with build
-                        RevHubOrientationOnRobot.UsbFacingDirection.FORWARD // TODO - align with build
+                        RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                        RevHubOrientationOnRobot.UsbFacingDirection.RIGHT
                 )
         );
 
