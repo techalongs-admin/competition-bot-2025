@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @Deprecated
-@Disabled
 @TeleOp (name = "WalkingRobot")
 public class WalkingRobot extends LinearOpMode {
     private DcMotor frontLeft;
@@ -51,11 +50,13 @@ public class WalkingRobot extends LinearOpMode {
             float BLPower = (-gamepad1.left_stick_y + gamepad1.right_stick_x) - gamepad1.left_stick_x;
             float BRPower = (-gamepad1.left_stick_y - gamepad1.right_stick_x) + gamepad1.left_stick_x;
 
-            double limiter = 0.5;
+            double limiter = 1;
             frontLeft.setPower(FLPower * limiter);
             frontRight.setPower(FRPower * limiter);
             backLeft.setPower(BLPower * limiter);
             backRight.setPower(BRPower * limiter);
+
+            updateTelemetry();
         }
     }
 
